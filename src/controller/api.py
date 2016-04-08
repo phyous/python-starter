@@ -14,6 +14,7 @@ api = Blueprint('api', __name__)
 def root():
     return jsonify({'hello': 'world'})
 
+# http requests through requests
 @api.route('/sample_http_request', methods=['GET'])
 def sample():
     url = 'http://jsonplaceholder.typicode.com/posts?userId=1'
@@ -27,7 +28,7 @@ def sample():
     }
     return jsonify(ret)
 
-
+# usage of helper funcitons
 @api.route('/length', methods=['GET'])
 def length():
     input = request.args['input']
@@ -37,19 +38,23 @@ def length():
             'length': str(StringUtil.char_count(input))
         })
 
+# sqlalchemy ORM - creation
 @api.route('/create_db', methods=['GET'])
 def create_db():
-    return "a"
-    # engine = create_engine('sqlite:///sqlalchemy_example.db')
-    # Base.metadata.bind = engine
-    # DBSession = sessionmaker(bind=engine)
-    # session = DBSession()
-    # 
-    # new_person = Person(name='new person')
-    # session.add(new_person)
-    # session.commit()
-    # 
-    # # Insert an Address in the address table
-    # new_address = Address(post_code='00000', person=new_person)
-    # session.add(new_address)
-    # session.commit()
+    engine = create_engine('sqlite:///sqlalchemy_example.db')
+    Base.metadata.bind = engine
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    
+    new_person = Person(name='new person')
+    session.add(new_person)
+    session.commit()
+    
+    # Insert an Address in the address table
+    new_address = Address(post_code='00000', person=new_person)
+    session.add(new_address)
+    session.commit()
+
+    ids = map(lambda p: p.id, session.query(Person).from_statement('select * from person').all())
+    
+    return jsonify({'people_ids': ids})
