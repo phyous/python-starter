@@ -1,0 +1,8 @@
+# ORM
+sqlalchemy
+# http library
+requests
+# test harness
+nose
+# web frameowrk
+flask
